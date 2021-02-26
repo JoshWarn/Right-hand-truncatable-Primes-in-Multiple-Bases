@@ -27,7 +27,8 @@ void master_threading(std::vector<int> base_primes, std::vector<int> modulusprim
 
 
 		subbase = subbase_selector(base_primes, base, path, sb_ext, identifier);	//Selects starting digit to use.
-		std::cout << "subbase: " << subbase << std::endl;
+		std::string printstring = "subbase: " + std::to_string(subbase);
+		std::cout << printstring << std::endl;
 
 		if (subbase != 0)
 		{
