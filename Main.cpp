@@ -8,20 +8,19 @@
 int main()
 {
 	int const thread_count = 12;												// thread count (1, inf)
-	int base_start = 75;															// starting base (2, )? Maybe start with 3.
-	int base_end = 75;															// ending base
+	int base_start = 75;													// Start base (3, inf)
+	int base_end = 75;													// End base (3, inf)
 	int base = base_start;
-	std::string path("C:/Users/source/repos/RHTP_6/RHTP_6");	// working directory
+	std::string path("C:/Users/source/repos/RHTP_6/RHTP_6");								// working directory
 	std::string sb_ext(".subbase");												// extension for subbase files
-	std::string b_ext(".csv");													// extension for base files
+	std::string b_ext(".csv");												// extension for base files
 	std::string b_filename("basedata");											// Name of combined base data file
 
 
 	std::thread t[thread_count];
-	// starting base number 
+	// starting base number; cleans empty subfiles.
 	int file_base = base_reader(b_filename, b_ext);
-
-	// TODO: Add code that removes and empty subfiles. Allows for proper continuation of a base.
+	subbase_cleaner(path, sb_ext);
 
 	if (file_base > base_start)
 	{
@@ -32,6 +31,7 @@ int main()
 	for (base ; base <= base_end; base++)
 	{
 		std::cout << "Base = " << base << std::endl;
+		
 		//Generate list of all primes less than base
 		std::vector<int> subprimes = eratosthene(base);
 		//List of all primes less than half base
@@ -40,7 +40,6 @@ int main()
 		// Opening threads
 		for (int thread = 0; thread < thread_count; thread++)
 		{
-			//std::cout << "thread " << thread + 1 << std::endl;
 			t[thread] = std::thread(master_threading, subprimes, modprimes, base, path, sb_ext);
 		}
 
@@ -51,9 +50,8 @@ int main()
 		}
 
 
-		// Combining the data from each subfile into a major file
+		// Combining the data from each subfile into a major file, removes subfiles.
 		base_writer(base, path, sb_ext, b_filename, b_ext);
-		// removing all subfilies
 
 	}
 	std::cout << "Task Completed" << std::endl;
