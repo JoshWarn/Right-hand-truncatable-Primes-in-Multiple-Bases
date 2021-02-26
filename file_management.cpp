@@ -136,12 +136,17 @@ int subbase_selector(std::vector<int> base_primes, int base, std::string path, s
 
 void subbase_cleaner(std::string path, std::string ext)
 {
+	/*
+	* What this does:
+	*	- scans for subbase files, deletes if empty.
+	* What this returns:
+	*	- Nothing
+	*/
 	int deleted_subfile_count = 0;
 	for (auto& p : std::filesystem::recursive_directory_iterator(path))
 	{
 		if (p.path().extension() == ext)
 		{
-			std::cout << ext << std::endl;
 			std::ifstream Subbase(p);
 			if (Subbase.peek() == std::ifstream::traits_type::eof())
 			{
