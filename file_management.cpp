@@ -20,8 +20,6 @@ int subbase_selector(std::vector<int> base_primes, int base, std::string path, s
 	* What this returns:
 	*	- Returns thread_prime integer
 	*	- Returns 0 if all others already used.
-	* TODO:
-	*	- Move the file extension outside of the script - as it's used in other defs (eg. File writer)
 	*/
 
 	//Manual Inputs
@@ -136,6 +134,34 @@ int subbase_selector(std::vector<int> base_primes, int base, std::string path, s
 	}
 }
 
+void subbase_cleaner(std::string path, std::string ext)
+{
+	int deleted_subfile_count = 0;
+	for (auto& p : std::filesystem::recursive_directory_iterator(path))
+	{
+		if (p.path().extension() == ext)
+		{
+			std::cout << ext << std::endl;
+			std::ifstream Subbase(p);
+			if (Subbase.peek() == std::ifstream::traits_type::eof())
+			{
+				Subbase.close();
+				std::filesystem::remove(p);
+				deleted_subfile_count += 1;
+			}
+			else
+			{
+				Subbase.close();
+			}
+		}
+	}
+
+	if (deleted_subfile_count != 1)
+	{
+		std::string printstring = std::to_string(deleted_subfile_count) + " empty subfiles deleted.";
+		std::cout << printstring << std::endl;
+	}
+}
 
 void subbase_writer(int subbase, std::string extension, uint64_t identifier, int primecount, int digitcount, int digitsum, std::vector<int> distribution)
 {
@@ -143,9 +169,7 @@ void subbase_writer(int subbase, std::string extension, uint64_t identifier, int
 		* What this does:
 		*	- Populate a file with the subbase data
 		* What this returns:
-		*	- Nothing.
-		* TODO:
-		*	- Everything
+		*	- Nothing
 		*/
 	std::fstream subbasedata(std::to_string(subbase) + "-" + std::to_string(identifier) + extension, std::ios::app);
 	std::string appendedstring = std::to_string(primecount) + " " + std::to_string(digitcount) + " " + std::to_string(digitsum);
@@ -169,8 +193,6 @@ int base_reader(std::string filename, std::string extension)
 		- If no base file exists, it will crease one.
 	* What this returns:
 	*	- base to start from
-	* TODO:
-	*	- Everything
 	*/
 	int from_file_base = 0;
 	if (std::filesystem::exists(filename + extension)) {
